@@ -1,0 +1,65 @@
+name: Training Pipeline
+
+on:
+    workflow_dispatch:
+        inputs:
+            experiment_name:
+                description: 'Experiment name (optional)'
+                required: false
+                default: 'manual-training'
+    push:
+        tags:
+            - 'v*'
+
+jobs:
+    train:
+        name: Train Model
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up Python
+          uses: actions/setup-python@v5
+          with:
+            python-version: '3.11'
+
+        - name: Install dependencies
+          run: |
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+        
+        - name: Train model
+          run: |
+            echo "Starting training process..."
+            echo "Experiment: ${{ github.event.inputs.experiment_name || github.ref_name }}"
+            python src/train.py
+            echo "Training completed."
+        
+        - name: Validate model artifact
+          run: |
+            python -c "
+            import joblib
+            import os
+            model_path = 'models/model.pkl'
+            assert os.path.exists(model_path), f'Model file {model_path} does not exist.'
+            
+            model = joblib.load(model_path)
+            print(f'Model loaded successfully.')
+
+            file_size = os.path.getsize(model_path)/1024
+            print(f'Model file size: {file_size} KB.')
+            "
+
+        - name: Upload model artifact
+          uses: actions/upload-artifact@v4
+          with:
+            name: trained-model-${{ github.sha }}
+            path: models/
+            retention-days: 90
+        
+        - name: Training summary
+          run: |
+            echo "Training pipeline completed successfully!"
+            echo "Model artifact uploaded."
