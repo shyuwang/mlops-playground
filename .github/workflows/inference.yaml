@@ -42,6 +42,28 @@ jobs:
         name: trained-model-.*
         path: models/
         if_no_artifact_found: fail
+  
+    - name: Verify and organize model files
+      run: |
+        echo "Checking downloaded files..."
+        find . -name "*.pkl" -type f
+        
+        # Find model.pkl and move to correct location
+        MODEL_FILE=$(find . -name "model.pkl" -type f | head -1)
+        
+        if [ -z "$MODEL_FILE" ]; then
+          echo "Error: model.pkl not found!"
+          exit 1
+        fi
+        
+        echo "Found model at: $MODEL_FILE"
+        
+        # Create models directory and copy file
+        mkdir -p models
+        cp "$MODEL_FILE" models/model.pkl
+        
+        echo "Model file ready at: models/model.pkl"
+        ls -lh models/
     
     - name: Run inference
       run: |
