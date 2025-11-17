@@ -1,6 +1,3 @@
-"""
-Inference script for GitHub Actions pipeline.
-"""
 import joblib
 import numpy as np
 import sys
