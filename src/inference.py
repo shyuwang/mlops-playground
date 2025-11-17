@@ -28,7 +28,7 @@ def run_inference(features, model_path="models/model.pkl"):
     features = np.array(features).reshape(1, -1)
 
     # Load model
-    print(f"\n📦 Loading model from {model_path}...")
+    print(f"\nLoading model from {model_path}...")
     if not os.path.exists(model_path):
         raise FileNotFoundError(
             f"Model not found: {model_path}\n"
