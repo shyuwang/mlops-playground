@@ -36,7 +36,7 @@ jobs:
     - name: Download latest trained model
       uses: dawidd6/action-download-artifact@v3
       with:
-        workflow: train.yml
+        workflow: train.yaml
         workflow_conclusion: success
         name_is_regexp: true
         name: trained-model-.*
