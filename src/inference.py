@@ -110,12 +110,12 @@ def main():
 
     except ValueError as e:
         print(f"\nInput Error: {e}")
-        print("💡 Please provide exactly 8 comma-separated numbers\n")
+        print('Please provide exactly 8 comma-separated numbers\n')
         return 1
 
     except FileNotFoundError as e:
         print(f"\nModel Error: {e}")
-        print("💡 Please ensure the model artifact was downloaded\n")
+        print("Please ensure the model artifact was downloaded\n")
         return 1
 
     except Exception as e:
