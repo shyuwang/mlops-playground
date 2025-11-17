@@ -1,0 +1,48 @@
+name: Inference Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      features:
+        description: 'Input features (comma-separated, 8 values)'
+        required: false
+        default: '8.3252,41.0,6.98,1.02,322.0,2.56,37.88,-122.23'
+        type: string
+      prediction_name:
+        description: 'Prediction name (optional)'
+        required: false
+        default: 'test-prediction'
+        type: string
+
+jobs:
+  inference:
+    name: Run Model Inference
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install scikit-learn joblib numpy
+    
+    - name: Download latest trained model
+      uses: dawidd6/action-download-artifact@v3
+      with:
+        workflow: train.yml
+        workflow_conclusion: success
+        name_is_regexp: true
+        name: trained-model-.*
+        path: models/
+        if_no_artifact_found: fail
+    
+    - name: Run inference
+      run: |
+        python src/inference.py "${{ github.event.inputs.features }}" "${{ github.event.inputs.prediction_name }}"
