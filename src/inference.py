@@ -110,7 +110,7 @@ def main():
 
     except ValueError as e:
         print(f"\nInput Error: {e}")
-        print('Please provide exactly 8 comma-separated numbers\n')
+        print("Please provide exactly 8 comma-separated numbers\n")
         return 1
 
     except FileNotFoundError as e:
